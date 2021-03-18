@@ -5,8 +5,30 @@
 # Esempio stupido ma per ricordare
 
 from socket import *
+from threading import Thread
+import sys
+
+CURSOR_UP_ONE = '\x1b[1A' 
+ERASE_LINE = '\x1b[2K' 
+
+#############
+# FUNCTIONS #
+#############
+
+# Listen to the server
+def listener(sock):
+    while True:
+        inmsg = sock.recv(1024).decode('utf-8')
+        sys.stdout.write(CURSOR_UP_ONE) 
+        sys.stdout.write(ERASE_LINE) 
+        print("-<-:", inmsg)
+        print("->-: ", end="")
 
 
+##########
+# SCRIPT #
+##########
+print("RINGBELL.py")
 # serverIp = input("Server ip: ")
 serverIp = "78.134.80.218"
 serverPort = 1200
@@ -15,8 +37,8 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 serverAddress = (serverIp, serverPort)
 
 clientSocket.connect(serverAddress)
-print("Conneted to", serverAddress)
-print("CLOSE to close the connection")
+print("Connected to", serverAddress)
+print("------------\n\n")
 
 # Authentication process
 msg = clientSocket.recv(1024)
@@ -26,15 +48,16 @@ clientSocket.send(username.encode("utf-8"))
 msg = clientSocket.recv(1024)
 print("-<-:", msg.decode("utf-8"))
 
+# Launch the listener thread
+thread = Thread(target=listener, args=(clientSocket, ))
+thread.start()
+
 while True:
     message = input("->-: ")
     clientSocket.send(message.encode("utf-8"))
 
     if message == 'CLOSE':
         break
-
-    modifiedMessage = clientSocket.recv(1024)
-    print("-<-:", modifiedMessage.decode("utf-8"))
 
 print("Connection closed by client")
 clientSocket.close()

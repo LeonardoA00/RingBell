@@ -123,7 +123,7 @@ def handler(connecitonSocket):
 # Returns the name of the command decoded
 def commandHandler(message, user):
     cmd = message.split()
-    if cmd == "":
+    if message == "":
         return ""
     if cmd[0] == "RING":
         dest = User.reconFromUsr(cmd[1])
