@@ -21,7 +21,7 @@ class User:
         self.username = username
     
     def connnectSocket(self, connectionSocket):
-        self.ip = connectionSocket.getsockname()[0]
+        self.ip = connectionSocket.getpeername()[0]
         self.connectionSocket = connectionSocket
         self.connectionStatus = True
 
@@ -86,10 +86,10 @@ def ring(sender, dest):
 def handler(connecitonSocket):
     user = User.authenticate(connecitonSocket)
     if user == -1:
-        print(connecitonSocket.getsockname(), "failed to authenticate")
+        print(connecitonSocket.getpeername(), "failed to authenticate")
         connecitonSocket.close()
     else:
-        print(connecitonSocket.getsockname(), "authenticated as", user.username)
+        print(connecitonSocket.getpeername(), "authenticated as", user.username)
     while True:
         message = user.connectionSocket.recv(1024)
         message = message.decode("utf-8")
@@ -153,7 +153,7 @@ while True:
     # user.connnectSocket(connectionSocket)
 
     thread = Thread(target=handler, args=(connectionSocket, ))
-    print("Opened connection with:", connectionSocket.getsockname(), "using Thread", thread)
+    print("Opened connection with:", connectionSocket.getpeername(), "using Thread", thread)
     thread.start()
 
 serverSocket.close()
