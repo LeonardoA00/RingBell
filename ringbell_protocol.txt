@@ -1,0 +1,9 @@
+SENDER PROTOCOL
+
+RING [dest.username] ring the doorbell
+CLOSE close the connection with the sever
+SETSTATE [state] Set the state "Busy"/"Free"/"Away"
+
+RECIEVER PROTOCOL
+
+RING [sender.username] recieved ring from sender
