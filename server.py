@@ -113,9 +113,8 @@ def handler(connecitonSocket):
         elif handlerExit == "":
             print("User", user.tag(), "forced connection close (blank)")
             break
-
-    user.connecitonSocket.close()
     user.connectionStatus = False
+    user.connectionSocket.close()
     
 # COMMAND HANDLER
 # Recognizes the command and execute work

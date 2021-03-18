@@ -20,7 +20,7 @@ def listener(sock):
     while True:
         inmsg = sock.recv(1024).decode('utf-8')
         sys.stdout.write(CURSOR_UP_ONE) 
-        sys.stdout.write(ERASE_LINE) 
+        # sys.stdout.write(ERASE_LINE)
         print("-<-:", inmsg)
         print("->-: ", end="")
 
