@@ -1,4 +1,6 @@
 import tkinter as tk
+import time
+import beepy
 from threading import Thread
 from socket import *
 
@@ -12,7 +14,8 @@ def listener(sock):
         inmsg = sock.recv(1024).decode('utf-8')
         cmd = inmsg.split()
         if cmd[0] == "RING":
-            ring_handler(cmd[1])
+            ring_thread = Thread(target=ring_handler, args=(cmd[1], ))
+            ring_thread.start()
 
 serverIp = "78.134.80.218"
 serverPort = 1200
@@ -26,11 +29,15 @@ clientSocket.connect(serverAddress)
 
 # Authentication
 msg = clientSocket.recv(1024)
-# print("-<-:", msg.decode("utf-8"))
+print("-<-:", msg.decode("utf-8"))
 clientSocket.send(username.encode("utf-8"))
 msg = clientSocket.recv(1024)
-# print("-<-:", msg.decode("utf-8"))
+print("-<-:", msg.decode("utf-8"))
 
+
+# Launch the listener thread
+thread = Thread(target=listener, args=(clientSocket, ))
+thread.start()
 
 ############
 # HANDLERS #
@@ -43,11 +50,16 @@ def buttonRing_handler(event):
 
 def buttonChangeState_handler(event):
     state = stateEntry.get()
-    message = "SETSTATE" + state
+    message = "SETSTATE " + state
     clientSocket.send(message.encode("utf-8"))
 
 def ring_handler(sender):
-    title.configure(backgroud='yellow')
+    print("RING from", sender)
+    title.configure(bg='yellow')
+    beepy.beep(sound='ping')
+    time.sleep(3)
+    title.configure(bg='white')
+    
 
 ###########
 # TKINTER #
@@ -68,7 +80,7 @@ destEntry = tk.Entry(
 
 )
 stateLabel = tk.Label(
-    text="Password:",
+    text="State:",
     bg="cyan"
 )
 stateEntry = tk.Entry(
