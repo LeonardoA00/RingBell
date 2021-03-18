@@ -78,6 +78,12 @@ def ring(sender, dest):
     ringMessage = "RING " + sender.username
     dest.connectionSocket.send(ringMessage.encode('utf-8'))
 
+def getOnline():
+    onStr = ""
+    for u in registeredUsers:
+        if u.connectionStatus == True:
+            onStr += (u.username + '\n')
+    return onStr
 
 
 
@@ -102,23 +108,33 @@ def handler(connecitonSocket):
                 u.print()
         
         if handlerExit == "CLOSE":
+            print("User", user.tag(), "requested connection close")
+            break
+        elif handlerExit == "":
+            print("User", user.tag(), "forced connection close (blank)")
             break
 
     user.connecitonSocket.close()
     user.connectionStatus = False
-    print("Closed connection with ", user.tag())
-
+    
 # COMMAND HANDLER
 # Recognizes the command and execute work
 # Or launch a handler for the command
 # Returns the name of the command decoded
 def commandHandler(message, user):
     cmd = message.split()
+    if cmd == "":
+        return ""
     if cmd[0] == "RING":
         dest = User.reconFromUsr(cmd[1])
         ring(user, dest)
     elif cmd[0] == "SETSTATE":
-        user.setState(cmd[1])   
+        user.setState(message[9:])
+    elif cmd[0] == "GETSTATE":
+        u = User.reconFromUsr(cmd[1])
+        user.connectionSocket.send(u.state.encode('utf-8'))
+    elif cmd[0] == "GETONLINE":
+        user.connectionSocket.send(getOnline().encode('utf-8'))
     # Returns the code for the command as connHndlr checks for CLOSE     
     return cmd[0]
 
