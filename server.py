@@ -155,6 +155,8 @@ serverSocket.bind(binding)
 # TODO implement from a file
 registeredUsers.append(User("mac"))
 registeredUsers.append(User("surface"))
+registeredUsers.append(User("leo"))
+registeredUsers.append(User("ricky"))
 registeredUsers.append(User("localhost"))
 
 # Launch server

@@ -8,31 +8,31 @@ The commands mean different things according to direction of the message (C->S o
 ## Command Syntax
 All commands start with the comand name in ALL CAPS then followed by the arguments
 #### RING
-Client -> Server
+Client > Server
 ```
 RING [dest]
 ```
 Sends a ring to the destination
-Server -> Client
+Server > Client
 ```
 RING [sender]
 ```
 A ring is recieved from the sender
 #### SETSTATE
-Client -> Server
+Client > Server
 ```
 SETSTATE [state]
 ```
 Sets a state for the user.
 A state is a string used to the describe the availability of the user.
 #### GETSTATE
-Client -> Server
+Client > Server
 ```
 GETSTATE [user]
 ```
 Get the state of a user
 #### GETONLINE
-Client -> Server
+Client > Server
 ```
 GETONLINE
 ```
