@@ -16,6 +16,16 @@ def listener(sock):
         if cmd[0] == "RING":
             ring_thread = Thread(target=ring_handler, args=(cmd[1], ))
             ring_thread.start()
+        else: # online list
+            online_refresh(cmd)
+
+def getOnline(sock):
+    time.sleep(5)
+    while True:
+        message = "GETONLINE"
+        sock.send(message.encode("utf-8"))
+        time.sleep(30)
+
 
 serverIp = "78.134.80.218"
 serverPort = 1200
@@ -38,13 +48,16 @@ print("-<-:", msg.decode("utf-8"))
 # Launch the listener thread
 thread = Thread(target=listener, args=(clientSocket, ))
 thread.start()
+# Launch the GetOnline thread
+getOnline_thread = Thread(target=getOnline, args=(clientSocket, ))
+getOnline_thread.start()
 
 ############
 # HANDLERS #
 ############
 
 def buttonRing_handler(event):
-    dest = destEntry.get()
+    dest = destUsr.get()
     message = "RING " + dest
     clientSocket.send(message.encode("utf-8"))
 
@@ -59,7 +72,12 @@ def ring_handler(sender):
     beepy.beep(sound='ping')
     time.sleep(3)
     title.configure(bg='white')
-    
+
+# TODO FIX!
+def online_refresh(oplist):
+    destList.option_clear()
+    for l in oplist:
+        destList.option_add(l, destUsr)
 
 ###########
 # TKINTER #
@@ -70,15 +88,24 @@ window = tk.Tk()
 
 title = tk.Label(
     text="RINGBELL",
-    bg="white"
+    bg="white",
+    padx=65
 )
 destLabel = tk.Label(
     text="Username:",
-    bg="cyan"
+    bg="cyan",
+    padx=45
 )
 destEntry = tk.Entry(
 
 )
+destUsr = tk.StringVar(window)
+destList = tk.OptionMenu(
+    window,
+    destUsr,
+    "-----"
+)
+destUsr.set("-----")
 stateLabel = tk.Label(
     text="State:",
     bg="cyan"
@@ -96,7 +123,8 @@ buttonChangeState = tk.Button(
 # Rendering
 title.grid(row=0, columnspan=2)
 destLabel.grid(row=1, columnspan=2)
-destEntry.grid(row=2, columnspan=2)
+# destEntry.grid(row=2, columnspan=2)
+destList.grid(row=2, columnspan=1)
 stateLabel.grid(row=3, columnspan=2)
 stateEntry.grid(row=4, columnspan=2)
 buttonRing.grid(row=5)
