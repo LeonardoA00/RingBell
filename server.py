@@ -1,7 +1,7 @@
 from socket import *
 from threading import Thread
 
-debug = True
+debug = False
 
 # Global user list
 # Contains instances of the registered users
